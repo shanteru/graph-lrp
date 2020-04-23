@@ -5,3 +5,5 @@ The implementation of LRP for Graph CNN is in *components* folder.
 The folder *lib* contains modifed by me code from Michaël Defferrard's [Graph CNN](https://github.com/mdeff/cnn_graph) repository. 
 ## License
 The source code is released under the terms of the MIT license
+
+TestLine2
