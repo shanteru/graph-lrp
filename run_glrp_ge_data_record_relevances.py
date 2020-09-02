@@ -1,8 +1,9 @@
 #!python
 
 """
-Running the GLRP on GCNN model trained on gene expression data. Obtained relevances are written into the file .
-The model can be retrained uncommenting a part of the code.
+Running the GLRP on GCNN model trained on gene expression data. 90% is for training and 10% for testing. 
+Relevances obtained for 10% of testing patients are written into the file "relevances_rendered_class.csv". From these relevances the patient subnetworks can be built.
+The file "predicted_concordance.csv" contains a table showing which patients were predicted correctly.
 """
 import numpy as np
 import pandas as pd
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     n_train = X_train.shape[0]
 
     params = dict()
-    params['dir_name']       = 'demo'
+    params['dir_name']       = 'GE'
     params['num_epochs']     = 100
     params['batch_size']     = 109
     params['eval_frequency'] = 40
@@ -99,10 +100,10 @@ if __name__ == "__main__":
     model = models.cgcnn(L, **params)
 
     # !!!
-    # TRAINING. Uncomment if you want to retrain the model.
-    # start = time.time()
-    # accuracy, loss, t_step, trained_losses = model.fit(X_train, y_train, X_test, y_test)
-    # end = time.time()
+    # TRAINING.
+    start = time.time()
+    accuracy, loss, t_step, trained_losses = model.fit(X_train, y_train, X_test, y_test)
+    end = time.time()
 
     probas_ = model.get_probabilities(X_test)
     labels_by_network = np.argmax(probas_, axis=1)

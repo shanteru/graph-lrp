@@ -1,0 +1,14 @@
+# Byte-compiled / optimized files
+__pycache__/
+
+# mnist dataset
+mnist/
+
+# data
+*.csv
+
+# Tensorflow summaries
+summaries/
+
+# Model parameters
+checkpoints/

@@ -1,6 +1,2 @@
-model_checkpoint_path: "/sybig/home/hch/MyPathSem/python-code/LRP_BATCH_NORM/lib/../checkpoints/demo/model-800"
-all_model_checkpoint_paths: "/sybig/home/hch/MyPathSem/python-code/LRP_BATCH_NORM/lib/../checkpoints/demo/model-640"
-all_model_checkpoint_paths: "/sybig/home/hch/MyPathSem/python-code/LRP_BATCH_NORM/lib/../checkpoints/demo/model-680"
-all_model_checkpoint_paths: "/sybig/home/hch/MyPathSem/python-code/LRP_BATCH_NORM/lib/../checkpoints/demo/model-720"
-all_model_checkpoint_paths: "/sybig/home/hch/MyPathSem/python-code/LRP_BATCH_NORM/lib/../checkpoints/demo/model-760"
-all_model_checkpoint_paths: "/sybig/home/hch/MyPathSem/python-code/LRP_BATCH_NORM/lib/../checkpoints/demo/model-800"
+model_checkpoint_path: "/sybig/home/hch/MyPathSem/python-code/github_repo/graph-lrp/lib/../checkpoints/demo/model-40"
+all_model_checkpoint_paths: "/sybig/home/hch/MyPathSem/python-code/github_repo/graph-lrp/lib/../checkpoints/demo/model-40"

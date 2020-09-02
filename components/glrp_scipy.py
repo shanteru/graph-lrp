@@ -37,8 +37,8 @@ class GraphLayerwiseRelevancePropagation:
         """
         Initialization of internals for relevance computations.
         :param model: gcnn model to LRP procedure is applied on
-        :param samples: which samples to calculate relevance on, num of samples == models batch size
-        :param labels: used as values for the gcnn output nodes to propagate relevance
+        :param samples: samples to calculate relevance on, num of samples <= models batch size
+        :param labels: used as values for the gcnn output nodes to propagate relevances, num of labels == models batch size
         """
         self.epsilon = 1e-10  # for numerical stability
 

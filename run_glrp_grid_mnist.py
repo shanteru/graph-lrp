@@ -1,8 +1,7 @@
 #!python
 
 """
-Running the GLRP on GCNN model trained on MNIST data. Digits are graph signals on 8-nearest neighbor graph.
-The model can be retrained uncommenting a part of the code.
+Running the GLRP on GCNN model trained on MNIST data. Digits are graph signals on 8 nearest-neighbors graph.
 """
 
 import numpy as np
@@ -77,17 +76,20 @@ if __name__ == "__main__":
     model = models.cgcnn(L, **params)
 
     # !!!
-    # To train again uncomment this part
-    # start = time.time()
-    # accuracy, loss, t_step, trained_losses = model.fit(train_data, train_labels, val_data, val_labels)
-    # end = time.time()
+    # Training
+    start = time.time()
+    accuracy, loss, t_step, trained_losses = model.fit(train_data, train_labels, val_data, val_labels)
+    end = time.time()
 
     probas_ = model.get_probabilities(test_data)
     f1 = 100 * f1_score(test_labels, np.argmax(probas_, axis=1), average='weighted')
     acc = 100 * accuracy_score(test_labels, np.argmax(probas_, axis=1))
     print("\n\tTest F1 weighted: ", f1)
     print("\tTest Accuraccy:", acc, "\n")
-
+	
+	
+	# !!!
+	# The glrp currently runs only for the number of the data points equal to or less than the batch size
     data_to_test = val_data[0:common["batch_size"], ]
     probas_ = model.get_probabilities(data_to_test)
     labels_by_network = np.argmax(probas_, axis=1)
