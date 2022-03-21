@@ -7,7 +7,7 @@ Running the GLRP on GCNN model trained on MNIST data. Digits are graph signals o
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score, f1_score
-from tensorflow.examples.tutorials.mnist import input_data
+from tensorflow.keras.datasets import mnist
 
 from components import glrp_scipy, visualize_mnist
 from lib import models, graph, coarsening
@@ -35,28 +35,25 @@ if __name__ == "__main__":
     graphs, perm = coarsening.coarsen(A, levels=COARSENING_LEVELS, self_connections=False)
     L = [graph.laplacian(A, normalized=True) for A in graphs]
 
-    mnist = input_data.read_data_sets(DIR_DATA, one_hot=False)
+    (train_data, train_labels), (test_data, test_labels) = mnist.load_data()
 
-    train_data = mnist.train.images.astype(np.float32)
-    val_data = mnist.validation.images.astype(np.float32)
-    test_data = mnist.test.images.astype(np.float32)
-    train_labels = mnist.train.labels
-    val_labels = mnist.validation.labels
-    test_labels = mnist.test.labels
+    train_data = train_data.reshape((train_data.shape[0], M*M)) / 255
+    test_data = test_data.reshape((test_data.shape[0], M*M)) / 255
+
+    print("max, min", np.max(test_data), np.min(test_data))
 
     train_data = coarsening.perm_data(train_data, perm)
-    val_data = coarsening.perm_data(val_data, perm)
     test_data = coarsening.perm_data(test_data, perm)
 
     common = {}
     common['dir_name'] = 'mnist_grid_ones/'
     common['num_epochs'] = 30
     common['batch_size'] = 100
-    common['decay_steps'] = mnist.train.num_examples / common['batch_size']
-    common['eval_frequency'] = 30 * common['num_epochs']
+    common['decay_steps'] = train_data.shape[0] / common['batch_size']
+    common['eval_frequency'] = 2 * train_data.shape[0]/common['batch_size']
     common['brelu'] = 'b1relu'
     common['pool'] = 'mpool1'
-    C = max(mnist.train.labels) + 1  # number of classes
+    C = max(train_labels) + 1  # number of classes
 
     common['regularization'] = 5e-4
     common['dropout'] = 0.5
@@ -77,8 +74,9 @@ if __name__ == "__main__":
 
     # !!!
     # Training
+    # In case the trained model is saved: simply comment the three lines below to run glrp again.
     start = time.time()
-    accuracy, loss, t_step, trained_losses = model.fit(train_data, train_labels, val_data, val_labels)
+    accuracy, loss, t_step, trained_losses = model.fit(train_data, train_labels, test_data, test_labels)
     end = time.time()
 
     probas_ = model.get_probabilities(test_data)
@@ -90,10 +88,10 @@ if __name__ == "__main__":
 	
 	# !!!
 	# The glrp currently runs only for the number of the data points equal to or less than the batch size
-    data_to_test = val_data[0:common["batch_size"], ]
+    data_to_test = test_data[0:common["batch_size"], ]
     probas_ = model.get_probabilities(data_to_test)
     labels_by_network = np.argmax(probas_, axis=1)
-    labels_data_to_test = val_labels[0:common["batch_size"], ]
+    labels_data_to_test = test_labels[0:common["batch_size"], ]
     I = np.eye(10)
     labels_hot_encoded = I[labels_by_network]
 
@@ -120,4 +118,4 @@ if __name__ == "__main__":
         ax = fig.add_subplot(111)
         ax.axis('off')
         ax.imshow(heatmap, cmap='Reds', interpolation='bilinear')
-        fig.savefig('{0}LRP_w^+_correct_label_index{1}_{2}.png'.format(results_dir, str(i), str(val_labels[i])))
+        fig.savefig('{0}LRP_w^+_correct_label_index{1}_{2}.png'.format(results_dir, str(i), str(test_labels[i])))

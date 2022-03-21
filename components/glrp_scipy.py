@@ -22,7 +22,8 @@
 
 from tensorflow.python.ops import gen_nn_ops
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import scipy
 from lib import graph
 import time
@@ -115,9 +116,18 @@ class GraphLayerwiseRelevancePropagation:
             elif 'pooling' in name[1]:
                 # TODO: incorporate pooling type and value into name
                 print("\tPooling:", name[0] + " " + name[1])
-                p = loc_pooling.pop()
-                relevances.append(self.prop_max_pool(self.activations[i], relevances[-1], ksize=[1, p, 1, 1],
-                                                     strides=[1, p, 1, 1]))
+                print("\t\tname of pooling:", self.model.pool.__name__)
+                if self.model.pool.__name__ == 'apool1':
+                    p = loc_pooling.pop()
+                    relevances.append(self.prop_avg_pool(self.activations[i], relevances[-1], ksize=[1, p, 1, 1],
+                                                         strides=[1, p, 1, 1]))
+                elif self.model.pool.__name__ == 'mpool1':
+                    p = loc_pooling.pop()
+                    relevances.append(self.prop_max_pool(self.activations[i], relevances[-1], ksize=[1, p, 1, 1],
+                                                         strides=[1, p, 1, 1]))
+                else:
+                    raise Exception('Error parsing the pooling type')
+
             elif 'conv' in name[0]:
                 if len(loc_poly) > 1:
                     print("\tConvolution: ", name[0], "\n")
@@ -128,7 +138,7 @@ class GraphLayerwiseRelevancePropagation:
                     relevances.append(self.prop_gconv_first_conv_layer(name[0], self.activations[i], relevances[-1],
                                                                        polynomials=loc_poly.pop()))
             else:
-                raise 'Error parsing layer'
+                raise Exception('Error parsing layer')
 
         return relevances
 
@@ -158,6 +168,17 @@ class GraphLayerwiseRelevancePropagation:
         tmp = c * act
         return tf.squeeze(tmp, [3])
 
+    def prop_avg_pool(self, activation, relevance, ksize=[1, 2, 1, 1], strides=[1, 2, 1, 1]):
+        """Propagates relevances through avg pooling."""
+        act = tf.expand_dims(activation, 3)  # N x M x F x 1
+        z = tf.nn.avg_pool(act, ksize, strides, padding='SAME') + self.epsilon
+        with self.model.graph.as_default():
+            rel = tf.expand_dims(relevance, 3)
+        s = rel / z
+        c = gen_nn_ops.avg_pool_grad(tf.shape(act), s, ksize, strides, padding='SAME')
+        tmp = c * act
+        return tf.squeeze(tmp, [3])
+
     def prop_gconv(self, name, activation, relevance, polynomials):
         """
         Perform relevance propagation through Graph Convolutional Layers.
@@ -181,7 +202,8 @@ class GraphLayerwiseRelevancePropagation:
         activation = self.run_tf_tensor(activation, samples=self.samples)
 
         # if relevance is a tf.tensor then run the session
-        if tf.contrib.framework.is_tensor(relevance):
+        # if tf.contrib.framework.is_tensor(relevance):
+        if tf.is_tensor(relevance):
             relevance = self.run_tf_tensor(relevance, self.samples)
 
         W = np.reshape(W, (int(W.shape[0] / K), K, Fout))
@@ -226,7 +248,8 @@ class GraphLayerwiseRelevancePropagation:
         activation = self.run_tf_tensor(activation, samples=self.samples)
 
         # Need in Numpy values for SciPy
-        if tf.contrib.framework.is_tensor(relevance):
+        # if tf.contrib.framework.is_tensor(relevance):
+        if tf.is_tensor(relevance):
             relevance = self.run_tf_tensor(relevance, self.samples)
 
         rel = np.zeros(shape=[N, M], dtype=np.float32)

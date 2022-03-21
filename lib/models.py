@@ -22,7 +22,9 @@
 
 
 from . import graph
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
 import sklearn
 import scipy.sparse
 import numpy as np
@@ -761,7 +763,8 @@ class cgcnn(base_model):
                     self.activations.append(x)
                 with tf.name_scope('pooling'):
                     x = self.pool(x, self.p[i])
-                    self.activations.append(x)
+                    if self.p[i] > 1:
+                        self.activations.append(x)
 
         # Fully connected hidden layers.
         N, M, F = x.get_shape()

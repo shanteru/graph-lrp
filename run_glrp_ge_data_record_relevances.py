@@ -101,6 +101,7 @@ if __name__ == "__main__":
 
     # !!!
     # TRAINING.
+    # In case the trained model is saved: simply comment the three lines below to run glrp again.
     start = time.time()
     accuracy, loss, t_step, trained_losses = model.fit(X_train, y_train, X_test, y_test)
     end = time.time()
