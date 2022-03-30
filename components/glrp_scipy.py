@@ -228,6 +228,56 @@ class GraphLayerwiseRelevancePropagation:
 
         return rel
 
+    def prop_gconv_first_conv_layer_sum_over_channels(self, name, activation, relevance, polynomials):
+        """
+        Experimental. Performs relevance propagation through the first Graph Convolutional Layer.
+        Makes sense to use only when the degree of Chebyshev polynomial is small (e.g. 2, means K=3).
+        Sums up the relevances over channels of the first feature map.
+        """
+        start = time.time()
+
+        w = self.act_weights[name][0]
+        b = self.act_weights[name][1]  # bias
+        N, M, Fin = activation.get_shape()
+        N, M, Fin = int(N), int(M), int(Fin)
+        Fout = int(w.get_shape().as_list()[-1])
+
+        K = int(w.get_shape().as_list()[0] / Fin)
+
+        W = self.model._get_session().run(w)
+        B = self.model._get_session().run(b)
+        activation = self.run_tf_tensor(activation, samples=self.samples)
+
+        # Need in Numpy values for SciPy
+        # if tf.contrib.framework.is_tensor(relevance):
+        if tf.is_tensor(relevance):
+            relevance = self.run_tf_tensor(relevance, self.samples)
+
+        # rel = np.zeros(shape=[N, M], dtype=np.float32)
+        rel = np.sum(relevance, axis = 2)
+
+        # for i in range(0, Fout):
+        #     w_pos = polynomials.dot(W[:, i])
+        #     self.filters_gc1.append(np.reshape(w_pos, [M, M]))
+        #     self.filtered_signal_gc1.append(np.expand_dims(np.matmul(self.samples, self.filters_gc1[-1]), axis=2))
+        #     w_pos = np.maximum(0.0, w_pos)
+        #     w_pos = np.reshape(w_pos, [M, M])
+        #     # w_pos = np.transpose(w_pos, axes=[0, 2, 1])  # M x Fin x M
+        #     # w_pos = np.reshape(w_pos, [M * Fin, M])
+        #
+        #     # !!!
+        #     # Z^+ rule
+        #     activation = np.reshape(activation, [N, Fin * M])  # N x Fin*M
+        #     z = np.matmul(activation, w_pos) + self.epsilon  # N x M
+        #     s = relevance[:, :, i] / z  # N x M
+        #     c = np.matmul(s, np.transpose(w_pos))  # N x M by transpose(M * Fin, M) = N x M * Fin
+        #     rel += c * activation
+        end = time.time()
+
+        print("\n\t" + name + ",", "relevance propagation time is: ", end - start, "\n")
+        return rel
+
+
     def prop_gconv_first_conv_layer(self, name, activation, relevance, polynomials):
         """
         Perform relevance propagation through the first Graph Convolutional Layer.

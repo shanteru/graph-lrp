@@ -61,7 +61,7 @@ if __name__ == "__main__":
     common['decay_rate'] = 0.95
     common['momentum'] = 0.9
     common['F'] = [32, 64]
-    common['K'] = [25, 25]
+    common['K'] = [25, 25] # 25 25
     common['p'] = [4, 4]
     common['M'] = [512, C]
 
@@ -75,9 +75,9 @@ if __name__ == "__main__":
     # !!!
     # Training
     # In case the trained model is saved: simply comment the three lines below to run glrp again.
-    start = time.time()
-    accuracy, loss, t_step, trained_losses = model.fit(train_data, train_labels, test_data, test_labels)
-    end = time.time()
+    # start = time.time()
+    # accuracy, loss, t_step, trained_losses = model.fit(train_data, train_labels, test_data, test_labels)
+    # end = time.time()
 
     probas_ = model.get_probabilities(test_data)
     f1 = 100 * f1_score(test_labels, np.argmax(probas_, axis=1), average='weighted')
