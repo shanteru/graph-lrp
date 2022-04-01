@@ -358,3 +358,10 @@ class ChebConvSlow(Layer):
     def config(self):
         return {"channels": self.channels, "K": self.K}
 
+
+class NonPos(keras.constraints.Constraint):
+    """Constrains the weights to be non-positive.
+    Property needed for biases when applying the framework of deep taylor decomposition.
+    """
+    def __call__(self, w):
+        return w * tf.cast(tf.less_equal(w, 0.), keras.backend.floatx())

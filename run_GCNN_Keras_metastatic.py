@@ -117,7 +117,14 @@ if __name__ == "__main__":
     # print(class_weights)
 
     # MyChenNet is a wrapper for the ChebNet model
-    my_cheb_net_for_cv = nn_cnn_models.MyChebNet(params)
+    # TODO: improve the functioning of the MyChebNet class
+    # !!!
+    # The model with biases constraints
+    #model = nn_cnn_models.get_bias_constrained_cheb_net_model(**params)
+
+    # to build the models as in the Genome Medicine paper
+    model = nn_cnn_models.get_cheb_net_model(**params)
+    my_cheb_net_for_cv = nn_cnn_models.MyChebNet(params, model)
     my_cheb_net_for_cv.create(feature_number=None)
 
     # model.summary()
