@@ -57,6 +57,7 @@ class GraphLayerwiseRelevancePropagation:
         self.labels = labels
         self.samples = samples
         self.X = self.activations[0]  # getting the first
+
         # self.y = self.activations.pop(0)
         # I am getting the activation of the first, but not useful here, self.y will be assigned a placeholder
 
@@ -78,8 +79,6 @@ class GraphLayerwiseRelevancePropagation:
                     w_and_b.append(wt)
             if w_and_b and (name[0] not in self.act_weights):
                 self.act_weights[name[0]] = w_and_b
-
-        self.activations.reverse()
 
         # !!!
         # first convolutional layer filters
@@ -103,9 +102,13 @@ class GraphLayerwiseRelevancePropagation:
         loc_poly = [pol for pol in self.polynomials]
         loc_pooling = [p for p in self.model.p]
         print("\n    Relevance calculation:")
-        for i in range(1, len(
-                self.activations)):  # start from 1 (not 0) penultimate activations since relevances already contains logits.
-            name = self.activations[i - 1].name.split('/')
+
+        for i in range(len(self.activations)-2, -1, -1):  # reverse order of the activations and excluding the very
+            # first activation 'ExpandDims:0'
+            name = self.activations[i+1].name.split('/')
+
+            # print("\n\t name of the activation", name)
+
             if 'logits' in name[0] or 'fc' in name[0]:
                 print("\tFully connected:", name[0])
                 relevances.append(self.prop_fc(name[0], self.activations[i], relevances[-1]))
