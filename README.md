@@ -14,14 +14,8 @@ The details are in the [paper](https://genomemedicine.biomedcentral.com/articles
 The file *run_glrp_grid_mnist.py* executes training of GCNN on the MNIST data and applies GLRP to it.
     
 ## Requirements
-To run the software one needs tensorflow, pandas, scipy, sklearn and matplotlib installed. I use docker, and the docker image can be built using the following content for the docker file:
-<br>
-<br>
-FROM tensorflow/tensorflow:2.4.0-gpu  
-RUN pip install pandas  
-RUN pip install scipy  
-RUN pip install sklearn  
-RUN pip install matplotlib  
+To run the software one needs tensorflow, pandas, scipy, sklearn and matplotlib installed. I have made a requirement.txt (updated as of 11/1/23) which you can just simple 
+*pip install -r requirements.txt*
 
 ## Breast Cancer Data
 The preprocessed breast cancer data is under this [link](http://mypathsem.bioinf.med.uni-goettingen.de/resources/glrp). It contains three zip-archived csv files:  
