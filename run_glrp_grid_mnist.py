@@ -36,6 +36,8 @@ if __name__ == "__main__":
     L = [graph.laplacian(A, normalized=True) for A in graphs]
 
     (train_data, train_labels), (test_data, test_labels) = mnist.load_data()
+    a = mnist.load_data()
+    print(a,"AHHH")
 
     train_data = train_data.reshape((train_data.shape[0], M*M)) / 255
     test_data = test_data.reshape((test_data.shape[0], M*M)) / 255
