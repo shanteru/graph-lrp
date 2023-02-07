@@ -13,7 +13,7 @@ The details are in the [paper](https://genomemedicine.biomedcentral.com/articles
 
 The file *run_glrp_grid_mnist.py* executes training of GCNN on the MNIST data and applies GLRP to it.
 
-# Different LRP variants
+## Different LRP variants
 
     
 ## Requirements
