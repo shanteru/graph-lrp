@@ -11,7 +11,7 @@ from scipy.sparse import csr_matrix
 from sklearn.metrics import accuracy_score, roc_curve, auc, f1_score
 from sklearn.model_selection import train_test_split
 
-from components import data_handling, glrp_scipy
+from components import data_handling, glrp_0_scipy
 from lib import models, graph, coarsening
 
 # from sklearn.model_selection import StratifiedKFold
@@ -134,15 +134,15 @@ if __name__ == "__main__":
     out_labels_conc_df = pd.DataFrame(np.array([labels_by_network, concordance]).transpose(),
                                       columns=["Predicted", "Concordance"])
     concordance_df = patient_ind_test_df.join(out_labels_conc_df)
-    concordance_df.to_csv(path_or_buf = dir_to_save + "predicted_concordance.csv", index=False)
+    concordance_df.to_csv(path_or_buf = dir_to_save + "predicted_concordance_lrp0.csv", index=False)
 
     # !!!
     # CALCULATION OF RELEVANCES
     # CAN TAKE QUITE SOME TIME (UP to 10 MIN, Intel(R) Xeon(R) CPU E5-1620 v2 @ 3.70GHz, 32 GB RAM)
-    glrp = glrp_scipy.GraphLayerwiseRelevancePropagation(model, X_test, labels_hot_encoded)
+    glrp = glrp_0_scipy.GraphLayerwiseRelevancePropagation(model, X_test, labels_hot_encoded)
     rel = glrp.get_relevances()[-1][:X_test.shape[0], :]
     rel = coarsening.perm_data_back(rel, perm, X.shape[1])
     rel_df = pd.DataFrame(rel, columns=DP.feature_names)
     rel_df = pd.DataFrame(data={"Patient ID": patient_indexes_test}).join(rel_df)
-    rel_df.to_csv(path_or_buf = dir_to_save + "relevances_rendered_class.csv", index=False)
+    rel_df.to_csv(path_or_buf = dir_to_save + "relevances_rendered_class_lrp0.csv", index=False)
 
