@@ -5,13 +5,16 @@ The version of the software that was published with the paper uses the Tensorflo
 
 Current version of the code uses Tensorflow 2.x.
 The implementation of LRP for Graph CNN is in the *components* folder.
-The folder *lib* contains modifed by me code from Michaël Defferrard's [Graph CNN](https://github.com/mdeff/cnn_graph) repository.
+The folder *lib* contains modifed code from Michaël Defferrard's [Graph CNN](https://github.com/mdeff/cnn_graph) repository.
 The visualization of the results can be found [on this website](http://mypathsem.bioinf.med.uni-goettingen.de/MetaRelSubNetVis).
 
 The file *run_glrp_ge_data_record_relevances.py* runs Graph Layer-wise Relevance Propagation (GLRP) to generate gene-wise relevances for individual breast cancer patients. 
 The details are in the [paper](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-021-00845-7).
 
 The file *run_glrp_grid_mnist.py* executes training of GCNN on the MNIST data and applies GLRP to it.
+
+## Different LRP variants
+
     
 ## Requirements
 To run the software one needs tensorflow, pandas, scipy, sklearn and matplotlib installed. I have made a requirement.txt (updated as of 11/1/23) which you can just simple 
