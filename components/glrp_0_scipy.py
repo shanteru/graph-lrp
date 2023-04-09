@@ -220,7 +220,9 @@ class GraphLayerwiseRelevancePropagation:
             w_pos = np.transpose(w_pos, axes=[0, 2, 1])  # M x Fin x M
             w_pos = np.reshape(w_pos, [M * Fin, M])
             activation = np.reshape(activation, [N, Fin * M])  # N x Fin*M
+            
             z = np.matmul(activation, w_pos)  # N x M
+            
             s = relevance[:, :, i] / z  # N x M
             c = np.matmul(s, np.transpose(w_pos))  # N x M by transpose(M * Fin, M) = N x M * Fin
             rel += c * activation
@@ -320,6 +322,9 @@ class GraphLayerwiseRelevancePropagation:
             
             activation = np.reshape(activation, [N, Fin * M])  # N x Fin*M
             z = np.matmul(activation, w_pos) # N x M
+            
+            print(z)
+            
             s = relevance[:, :, i] / z  # N x M
             c = np.matmul(s, np.transpose(w_pos))  # N x M by transpose(M * Fin, M) = N x M * Fin
             rel += c * activation
